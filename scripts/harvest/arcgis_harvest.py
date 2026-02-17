@@ -5,6 +5,7 @@ from __future__ import annotations
 from pathlib import Path
 from urllib.parse import urlparse
 
+from scripts.common.arcgis_hosts import resolve_arcgis_service_url
 from scripts.common.fs import ensure_dir, write_json
 from scripts.common.http import HttpClient, HttpRequestError, TimeoutConfig
 from scripts.common.models import RawRecord
@@ -152,7 +153,8 @@ def run_arcgis_harvest(
     client = http_client or HttpClient()
     try:
         for service in territory_config["arcgis"]["services"]:
-            service_url = service["service_url"].rstrip("/")
+            resolved = resolve_arcgis_service_url(service["service_url"].rstrip("/"), client)
+            service_url = resolved.resolved_url.rstrip("/")
             source_name = service["name"]
             source_label = service.get("source_label", "other")
             layer_ids = service.get("layer_ids") or [0]
