@@ -1,6 +1,9 @@
 import csv
 from pathlib import Path
 
+import pytest
+
+from scripts.common.errors import ContractError
 from scripts.pipeline.map_to_onspd import run_map_onspd
 
 
@@ -48,3 +51,20 @@ def test_map_to_onspd_writes_contract_header_and_rows(tmp_path: Path):
     assert reader[0] == ["pcd", "pcd2", "lat", "long", "ctry"]
     assert reader[1][0] == "JE2 3AB"
     assert reader[1][1] == "JE23AB"
+
+
+def test_map_to_onspd_fails_when_canonical_missing(tmp_path: Path):
+    territory_config = {
+        "output": {
+            "canonical_filename": "jersey.csv",
+            "onspd_filename": "jersey_onspd.csv",
+        }
+    }
+    onspd_columns = {
+        "columns": [
+            {"name": "pcd", "source_mapping": "normalised_postcode"},
+        ]
+    }
+
+    with pytest.raises(ContractError):
+        run_map_onspd("JE", territory_config, onspd_columns, tmp_path)

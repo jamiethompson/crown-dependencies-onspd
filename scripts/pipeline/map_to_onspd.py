@@ -11,7 +11,7 @@ from scripts.common.fs import write_csv
 
 def _read_canonical_rows(path: Path) -> list[dict]:
     if not path.exists():
-        return []
+        raise ContractError(f"Canonical input missing: {path}")
     with path.open("r", encoding="utf-8", newline="") as f:
         return list(csv.DictReader(f))
 
