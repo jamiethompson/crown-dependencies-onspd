@@ -1,0 +1,44 @@
+territory:
+  code: GY
+  name: Guernsey
+source_priority: ["guernsey_gov_arcgis", "digimap_guernsey", "osm_overpass", "osm_geofabrik"]
+validation:
+  bbox_wgs84:
+    min_lat: 49.40
+    max_lat: 49.55
+    min_lon: -2.70
+    max_lon: -2.45
+arcgis:
+  enabled: true
+  services:
+    - name: guernsey_gov_arcgis
+      service_url: "https://example.gg/arcgis/rest/services/Postcodes/MapServer"
+      layer_ids: [0]
+      query_where: "1=1"
+      id_chunk_size: 500
+      out_fields: "*"
+      expects_authoritative: true
+      source_label: authoritative
+overpass:
+  enabled: true
+  endpoint: "https://overpass-api.de/api/interpreter"
+  timeout_seconds: 180
+  area_strategy: bbox
+  bbox: [49.40, -2.70, 49.55, -2.45]
+geofabrik:
+  enabled: true
+  pbf_path: ""
+  download_url: ""
+fields:
+  postcode_candidates: ["postcode", "POSTCODE", "addr_postcode", "addr:postcode"]
+  lat_candidates: ["lat", "LATITUDE", "y"]
+  lon_candidates: ["lon", "LONGITUDE", "x"]
+  geometry_field: geometry
+crs:
+  default_epsg: 4326
+  authoritative_epsg_hint_by_source:
+    guernsey_gov_arcgis: 4326
+scoring_profile: default
+output:
+  canonical_filename: guernsey.csv
+  onspd_filename: guernsey_onspd.csv

@@ -1,0 +1,9 @@
+requests==2.*
+PyYAML==6.*
+pyproj==3.*
+python-dateutil==2.*
+pytest==8.*
+pytest-cov==5.*
+jsonschema==4.*
+tenacity==9.*
+pandas==2.*

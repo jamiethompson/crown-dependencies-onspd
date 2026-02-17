@@ -1,0 +1,23 @@
+version: "1.0"
+null_policy: blank
+columns:
+  - name: pcd
+    type: string
+    nullable: false
+    source_mapping: normalised_postcode
+  - name: pcd2
+    type: string
+    nullable: true
+    source_mapping: normalised_postcode_no_space
+  - name: lat
+    type: float
+    nullable: true
+    source_mapping: lat
+  - name: long
+    type: float
+    nullable: true
+    source_mapping: lon
+  - name: ctry
+    type: string
+    nullable: true
+    source_mapping: country_code_or_blank
