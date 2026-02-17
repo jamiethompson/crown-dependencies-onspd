@@ -5,6 +5,7 @@ from __future__ import annotations
 from pathlib import Path
 from urllib.parse import urlparse
 
+from scripts.common.arcgis_hosts import resolve_arcgis_service_url
 from scripts.common.fs import ensure_dir, write_json
 from scripts.common.http import HttpClient, TimeoutConfig
 
@@ -48,6 +49,8 @@ def run_discovery(
     try:
         for service in territory_config["arcgis"]["services"]:
             service_url = _service_metadata_url(service["service_url"])
+            resolved = resolve_arcgis_service_url(service_url, client)
+            service_url = _service_metadata_url(resolved.resolved_url)
             service_meta = client.get_json(
                 service_url,
                 source_type="arcgis",
@@ -75,6 +78,9 @@ def run_discovery(
                 {
                     "name": service["name"],
                     "service_url": service_url,
+                    "original_service_url": resolved.original_url,
+                    "host_fallback_used": resolved.fallback_used,
+                    "attempted_hosts": resolved.attempted_hosts,
                     "service_metadata": service_meta,
                     "layers": layers,
                 }
