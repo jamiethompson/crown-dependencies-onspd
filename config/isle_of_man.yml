@@ -2,54 +2,122 @@ territory:
   code: IM
   name: Isle of Man
 source_priority:
-- iom_gov_arcgis
-- digimap_iom
-- osm_overpass
-- osm_geofabrik
+  - iom_gambling_opportunities
+  - iom_household_help
+  - iom_food_and_drink
+  - iom_taste_iom
+  - iom_accommodation
+  - iom_warm_spaces
+  - iom_points_of_interest
+  - osm_overpass
+  - osm_geofabrik
 validation:
   bbox_wgs84:
     min_lat: 54.0
     max_lat: 54.45
     min_lon: -4.95
     max_lon: -4.2
+  permission_needed_possible_for_iom: true
 arcgis:
   enabled: false
-  services: []
+  services:
+    - name: iom_gambling_opportunities
+      service_url: "https://services3.arcgis.com/dBlcVWoJgxxpCttN/arcgis/rest/services/GamblingOpportunities/FeatureServer"
+      layer_ids: [0]
+      query_where: "1=1"
+      id_chunk_size: 500
+      out_fields: "*"
+      expects_authoritative: true
+      source_label: authoritative
+    - name: iom_household_help
+      service_url: "https://services3.arcgis.com/dBlcVWoJgxxpCttN/arcgis/rest/services/PreProduction_HouseHoldHelp/FeatureServer"
+      layer_ids: [0]
+      query_where: "1=1"
+      id_chunk_size: 500
+      out_fields: "*"
+      expects_authoritative: true
+      source_label: authoritative
+    - name: iom_food_and_drink
+      service_url: "https://services3.arcgis.com/dBlcVWoJgxxpCttN/arcgis/rest/services/FoodAndDrink/FeatureServer"
+      layer_ids: [0]
+      query_where: "1=1"
+      id_chunk_size: 500
+      out_fields: "*"
+      expects_authoritative: true
+      source_label: authoritative
+    - name: iom_taste_iom
+      service_url: "https://services3.arcgis.com/dBlcVWoJgxxpCttN/arcgis/rest/services/RNFTasteIOM/FeatureServer"
+      layer_ids: [0]
+      query_where: "1=1"
+      id_chunk_size: 500
+      out_fields: "*"
+      expects_authoritative: true
+      source_label: authoritative
+    - name: iom_accommodation
+      service_url: "https://services3.arcgis.com/dBlcVWoJgxxpCttN/arcgis/rest/services/RNFAccommodation/FeatureServer"
+      layer_ids: [0]
+      query_where: "1=1"
+      id_chunk_size: 500
+      out_fields: "*"
+      expects_authoritative: true
+      source_label: authoritative
+    - name: iom_warm_spaces
+      service_url: "https://services3.arcgis.com/dBlcVWoJgxxpCttN/arcgis/rest/services/WarmSpaces_View/FeatureServer"
+      layer_ids: [0]
+      query_where: "1=1"
+      id_chunk_size: 500
+      out_fields: "*"
+      expects_authoritative: true
+      source_label: authoritative
+    - name: iom_points_of_interest
+      service_url: "https://services3.arcgis.com/dBlcVWoJgxxpCttN/arcgis/rest/services/RNFPointsofInterest/FeatureServer"
+      layer_ids: [0]
+      query_where: "1=1"
+      id_chunk_size: 500
+      out_fields: "*"
+      expects_authoritative: true
+      source_label: authoritative
 overpass:
   enabled: false
-  endpoint: https://overpass-api.de/api/interpreter
+  endpoint: "https://overpass-api.de/api/interpreter"
   timeout_seconds: 180
   area_strategy: bbox
-  bbox:
-  - 54.0
-  - -4.95
-  - 54.45
-  - -4.2
+  bbox: [54.0, -4.95, 54.45, -4.2]
 geofabrik:
   enabled: false
-  pbf_path: ''
-  download_url: ''
+  pbf_path: ""
+  download_url: ""
 fields:
   postcode_candidates:
-  - postcode
-  - POSTCODE
-  - addr_postcode
-  - addr:postcode
-  - PostCode
-  - Postcode
+    - postcode
+    - POSTCODE
+    - addr_postcode
+    - addr:postcode
+    - PostCode
+    - Postcode
+    - ADDRESS
+    - Address
+    - Address_
+    - FormattedAddress
   lat_candidates:
-  - lat
-  - LATITUDE
-  - y
+    - lat
+    - LATITUDE
+    - y
   lon_candidates:
-  - lon
-  - LONGITUDE
-  - x
+    - lon
+    - LONGITUDE
+    - x
   geometry_field: geometry
 crs:
-  default_epsg: 4326
+  default_epsg: 27700
   authoritative_epsg_hint_by_source:
-    iom_gov_arcgis: 4326
+    iom_gambling_opportunities: 27700
+    iom_household_help: 27700
+    iom_food_and_drink: 27700
+    iom_taste_iom: 27700
+    iom_accommodation: 27700
+    iom_warm_spaces: 27700
+    iom_points_of_interest: 27700
 scoring_profile: default
 output:
   canonical_filename: isle_of_man.csv

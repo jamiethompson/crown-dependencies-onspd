@@ -23,6 +23,11 @@ def test_normalise_rejects_invalid_pattern():
     assert normalise_postcode("JEA 3AB") is None
 
 
+def test_normalise_extracts_embedded_postcode_from_address_text():
+    raw = "55 - 57 Duke Street Douglas Isle Of Man IM1 2AU"
+    assert normalise_postcode(raw) == "IM1 2AU"
+
+
 def test_validator_accepts_unit_regex():
     assert is_valid_uk_unit_postcode("JE2 3AB")
     assert not is_valid_uk_unit_postcode("JE23AB")

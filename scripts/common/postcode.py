@@ -5,6 +5,7 @@ from __future__ import annotations
 import re
 
 UK_UNIT_POSTCODE_RE = re.compile(r"^([A-Z]{1,2}\d[A-Z\d]?)\s(\d[A-Z]{2})$")
+_EMBEDDED_POSTCODE_RE = re.compile(r"\b([A-Z]{1,2}\d[A-Z\d]?\s*\d[A-Z]{2})\b")
 
 _PUNCTUATION_RE = re.compile(r"[\.,;:'\"`_\-/\\()\[\]{}|~!?@#$%^&*+=]")
 _WHITESPACE_RE = re.compile(r"\s+")
@@ -23,6 +24,11 @@ def normalise_postcode(raw: str | None) -> str | None:
         return None
 
     cleaned = cleaned.upper()
+    # Some source fields contain full addresses with postcode embedded.
+    if len(cleaned) > 8:
+        embedded = _EMBEDDED_POSTCODE_RE.search(cleaned)
+        if embedded:
+            cleaned = embedded.group(1)
     cleaned = _PUNCTUATION_RE.sub("", cleaned)
     cleaned = _WHITESPACE_RE.sub("", cleaned)
 

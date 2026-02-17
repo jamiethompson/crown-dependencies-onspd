@@ -75,3 +75,54 @@ def test_geofabrik_parse_ingests_json_fixture(tmp_path: Path):
 
     assert result["row_count"] == 1
     assert result["rows"][0]["raw_postcode"] == "JE1 1AA"
+
+
+@pytest.mark.integration
+def test_geofabrik_parse_ingests_geojson_feature_collection(tmp_path: Path):
+    fixture_path = tmp_path / "im_extract.geojson"
+    fixture_path.write_text(
+        json.dumps(
+            {
+                "type": "FeatureCollection",
+                "features": [
+                    {
+                        "type": "Feature",
+                        "properties": {"postcode": "IM1 2AU"},
+                        "geometry": {"type": "Point", "coordinates": [-4.4755, 54.1505]},
+                    },
+                    {
+                        "type": "Feature",
+                        "properties": {"addr:postcode": "IM2 3CD"},
+                        "geometry": {
+                            "type": "Polygon",
+                            "coordinates": [
+                                [
+                                    [-4.49, 54.16],
+                                    [-4.48, 54.16],
+                                    [-4.48, 54.17],
+                                    [-4.49, 54.17],
+                                    [-4.49, 54.16],
+                                ]
+                            ],
+                        },
+                    },
+                ],
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    territory_config = {
+        "fields": {"postcode_candidates": ["postcode", "addr:postcode"]},
+        "geofabrik": {
+            "enabled": True,
+            "pbf_path": str(fixture_path),
+            "download_url": "",
+        },
+    }
+
+    result = run_geofabrik_parse("IM", territory_config, tmp_path, run_id="run-7", run_date="2026-02-17")
+
+    assert result["row_count"] == 2
+    assert {row["raw_postcode"] for row in result["rows"]} == {"IM1 2AU", "IM2 3CD"}
+    assert any(row["raw_lat"] is not None and row["raw_lon"] is not None for row in result["rows"])
