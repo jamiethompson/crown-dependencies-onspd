@@ -5,6 +5,7 @@ htmlcov/
 *.pyc
 .venv/
 .env
+.idea/
 .DS_Store
 data/raw/**
 !data/raw/.gitkeep
