@@ -2,6 +2,11 @@
 
 USER_AGENT = "crown-postcodes/1.2 (+research; contact: configured-email)"
 SUPPORTED_TERRITORIES = ("JE", "GY", "IM")
+TERRITORY_SLUG_BY_CODE = {
+    "JE": "jersey",
+    "GY": "guernsey",
+    "IM": "isle_of_man",
+}
 STAGES = (
     "discover",
     "harvest",
