@@ -21,6 +21,8 @@ python -m scripts.cli merge --territory all
 python -m scripts.cli map-onspd --territory all
 python -m scripts.cli validate --territory all
 python -m scripts.cli all --territory all
+# live IM sources (ArcGIS + Overpass overlay)
+python -m scripts.cli all --territory IM --overlay-config-dir config/live
 ```
 
 Equivalent Make targets:
@@ -56,6 +58,16 @@ Given identical config, identical raw inputs, and identical run-date, canonical 
 
 ## Status
 Stages 1-4 are implemented: scaffold, config loading, source ingestion, deterministic merge/scoring/temporal logic, strict exports, validation reporting, and CI.
+
+## Isle Of Man Live Sources
+- `config/isle_of_man.yml` keeps known IM source definitions but defaults all sources to disabled for deterministic local/CI runs.
+- `config/live/isle_of_man.yml` enables live IM ArcGIS + Overpass harvesting without changing base config.
+- `scripts/harvest/geofabrik_parse.py` accepts both Overpass-style JSON and standard GeoJSON `FeatureCollection` files, so fallback extracts can be ingested when provided locally.
+- Candidate fallback data sources for local GeoJSON ingestion:
+  - [NextGIS OSM Isle of Man extract](https://data.nextgis.com/en/region/IM/base/)
+  - [GADM Isle of Man boundaries](https://gadm.org/download_country.html)
+  - [IGISMap Isle of Man datasets](https://www.igismap.com/download-isle-of-man-administrative-boundary-gis-data-for-districts-parishes-and-more/)
+  - [Community Isle of Man boundaries repository](https://github.com/justinelliotmeyers/official_isle_of_man_boundaries)
 
 ## License Notes
 See `LICENSE_NOTES.md` for source attribution and usage constraints.

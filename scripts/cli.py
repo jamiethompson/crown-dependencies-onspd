@@ -29,6 +29,7 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     parser.add_argument("--run-date", default=None)
     parser.add_argument("--run-id", default=None)
     parser.add_argument("--config-dir", default="./config")
+    parser.add_argument("--overlay-config-dir", default=None)
     parser.add_argument("--data-dir", default="./data")
     parser.add_argument("--log-level", default="INFO", choices=["DEBUG", "INFO", "WARN", "ERROR"])
     parser.add_argument("--strict", action="store_true")
@@ -64,10 +65,11 @@ def run_command(args: argparse.Namespace) -> int:
     run_id = args.run_id or generate_run_id()
     run_date = parse_run_date(args.run_date)
     config_dir = Path(args.config_dir)
+    overlay_config_dir = Path(args.overlay_config_dir) if args.overlay_config_dir else None
     data_dir = Path(args.data_dir)
 
     logger = build_logger(run_id, data_dir=data_dir, level=args.log_level)
-    bundle = load_all_configs(config_dir)
+    bundle = load_all_configs(config_dir, overlay_config_dir=overlay_config_dir)
     territories = resolve_territories(args.territory)
     stages = STAGES if args.command == "all" else (args.command,)
 
