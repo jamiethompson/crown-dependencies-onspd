@@ -75,3 +75,57 @@ def test_arcgis_harvest_ids_chunk_and_fallback_without_outsr(tmp_path: Path):
     assert result["rows"][0]["raw_postcode"] == "JE2 3AB"
     assert result["rows"][0]["source_wkid"] == 4326
     assert (tmp_path / "raw" / "arcgis" / "je_arcgis.json").exists()
+
+
+@pytest.mark.integration
+def test_arcgis_harvest_uses_geometry_when_latlon_fields_are_malformed(tmp_path: Path):
+    class FakeMalformedClient:
+        def get_json(self, _url: str, **kwargs):
+            params = kwargs.get("params") or {}
+            if params.get("returnIdsOnly") == "true":
+                return {"objectIdFieldName": "OBJECTID", "objectIds": [1]}
+            return {
+                "features": [
+                    {
+                        "attributes": {"OBJECTID": 1, "postcode": "JE2 3AB", "lat": "not-a-number", "lon": "x"},
+                        "geometry": {"x": -2.11, "y": 49.22, "spatialReference": {"wkid": 4326}},
+                    }
+                ]
+            }
+
+        def close(self):
+            return None
+
+    territory_config = {
+        "arcgis": {
+            "enabled": True,
+            "services": [
+                {
+                    "name": "jersey_gov_arcgis",
+                    "service_url": "https://example.je/arcgis/rest/services/Postcodes/MapServer",
+                    "layer_ids": [0],
+                    "query_where": "1=1",
+                    "id_chunk_size": 500,
+                    "out_fields": "*",
+                    "source_label": "authoritative",
+                }
+            ],
+        },
+        "fields": {
+            "postcode_candidates": ["postcode"],
+            "lat_candidates": ["lat"],
+            "lon_candidates": ["lon"],
+        },
+    }
+
+    result = run_arcgis_harvest(
+        "JE",
+        territory_config,
+        tmp_path,
+        run_id="run-2b",
+        run_date="2026-02-17",
+        http_client=FakeMalformedClient(),
+    )
+
+    assert result["rows"][0]["raw_lat"] == 49.22
+    assert result["rows"][0]["raw_lon"] == -2.11

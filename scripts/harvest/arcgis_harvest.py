@@ -44,6 +44,15 @@ def _parse_wkid(geometry: dict | None) -> int | None:
         return None
 
 
+def _safe_float(value: object) -> float | None:
+    if value is None:
+        return None
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return None
+
+
 def _fetch_ids(client: HttpClient, layer_url: str, where: str) -> tuple[str | None, list[int]]:
     payload = client.get_json(
         f"{layer_url}/query",
@@ -152,15 +161,15 @@ def run_arcgis_harvest(
                         if object_id_field_name and object_id_field_name in attributes:
                             source_id = str(attributes[object_id_field_name])
                         raw_postcode = _lookup_first(attributes, postcode_candidates)
-                        raw_lat = _lookup_first(attributes, lat_candidates)
-                        raw_lon = _lookup_first(attributes, lon_candidates)
+                        raw_lat = _safe_float(_lookup_first(attributes, lat_candidates))
+                        raw_lon = _safe_float(_lookup_first(attributes, lon_candidates))
 
                         if (raw_lat is None or raw_lon is None) and geometry:
                             geom_x = geometry.get("x")
                             geom_y = geometry.get("y")
                             if geom_x is not None and geom_y is not None:
-                                raw_lat = geom_y
-                                raw_lon = geom_x
+                                raw_lat = _safe_float(geom_y)
+                                raw_lon = _safe_float(geom_x)
 
                         record = RawRecord(
                             territory=territory_code,
@@ -168,8 +177,8 @@ def run_arcgis_harvest(
                             source_class=_source_class(source_label),
                             source_record_id=source_id,
                             raw_postcode=str(raw_postcode) if raw_postcode is not None else None,
-                            raw_lat=float(raw_lat) if raw_lat is not None else None,
-                            raw_lon=float(raw_lon) if raw_lon is not None else None,
+                            raw_lat=raw_lat,
+                            raw_lon=raw_lon,
                             raw_geometry=geometry,
                             source_wkid=_parse_wkid(geometry),
                             extract_date=run_date,
