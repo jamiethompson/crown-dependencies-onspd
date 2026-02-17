@@ -1,0 +1,21 @@
+{
+  "elements": [
+    {
+      "type": "node",
+      "id": 1,
+      "lat": 49.2,
+      "lon": -2.1,
+      "tags": {
+        "addr:postcode": "JE2 3AB"
+      }
+    },
+    {
+      "type": "way",
+      "id": 2,
+      "center": {"lat": 49.25, "lon": -2.15},
+      "tags": {
+        "addr:postcode": "JE3 4CD"
+      }
+    }
+  ]
+}

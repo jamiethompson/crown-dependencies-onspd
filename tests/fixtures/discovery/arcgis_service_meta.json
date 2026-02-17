@@ -1,0 +1,7 @@
+{
+  "currentVersion": 11.2,
+  "layers": [
+    {"id": 0, "name": "Postcodes"}
+  ],
+  "capabilities": "Query"
+}

@@ -9,7 +9,7 @@ validation:
     min_lon: -2.70
     max_lon: -2.45
 arcgis:
-  enabled: true
+  enabled: false
   services:
     - name: guernsey_gov_arcgis
       service_url: "https://example.gg/arcgis/rest/services/Postcodes/MapServer"
@@ -20,13 +20,13 @@ arcgis:
       expects_authoritative: true
       source_label: authoritative
 overpass:
-  enabled: true
+  enabled: false
   endpoint: "https://overpass-api.de/api/interpreter"
   timeout_seconds: 180
   area_strategy: bbox
   bbox: [49.40, -2.70, 49.55, -2.45]
 geofabrik:
-  enabled: true
+  enabled: false
   pbf_path: ""
   download_url: ""
 fields:
