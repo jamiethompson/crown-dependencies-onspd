@@ -12,7 +12,7 @@ arcgis:
   enabled: false
   services:
     - name: guernsey_gov_arcgis
-      service_url: "https://example.gg/arcgis/rest/services/Postcodes/MapServer"
+      service_url: "https://cadastreonline.digimap.gg/arcgis/rest/services/StatesOfGuernsey/CafMapOL/MapServer"
       layer_ids: [0]
       query_where: "1=1"
       id_chunk_size: 500

@@ -10,15 +10,7 @@ validation:
     max_lon: -4.20
 arcgis:
   enabled: false
-  services:
-    - name: iom_gov_arcgis
-      service_url: "https://example.im/arcgis/rest/services/Postcodes/MapServer"
-      layer_ids: [0]
-      query_where: "1=1"
-      id_chunk_size: 500
-      out_fields: "*"
-      expects_authoritative: true
-      source_label: authoritative
+  services: []
 overpass:
   enabled: false
   endpoint: "https://overpass-api.de/api/interpreter"

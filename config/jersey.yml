@@ -12,7 +12,7 @@ arcgis:
   enabled: false
   services:
     - name: jersey_gov_arcgis
-      service_url: "https://example.je/arcgis/rest/services/Postcodes/MapServer"
+      service_url: "https://gps.digimap.gg/arcgis/rest/services/StatesOfJersey/JerseyPlanning/MapServer"
       layer_ids: [0]
       query_where: "1=1"
       id_chunk_size: 500
