@@ -45,7 +45,7 @@ Common options:
 - `make test`
 
 ## Current Status
-Stage 1 foundation is in place: scaffold, config loading, CLI orchestration, deterministic logging, and baseline tests/CI.
+Stages 1-3 are in place: scaffold, config loading, CLI orchestration, source ingestion modules, deterministic merge, coordinate resolution, scoring, temporal tracking, canonical export, and strict ONSPD mapping.
 
 ## License Notes
 See `LICENSE_NOTES.md` for source attribution and usage constraints.

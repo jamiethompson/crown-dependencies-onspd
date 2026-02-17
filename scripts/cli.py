@@ -14,10 +14,11 @@ from scripts.common.logging import build_logger, log_event
 from scripts.common.time_utils import parse_run_date
 from scripts.discovery.arcgis_discover import run_discovery
 from scripts.harvest.runner import run_harvest_for_territory
-from scripts.pipeline.export import write_empty_canonical
+from scripts.pipeline.export import write_canonical_csv
 from scripts.pipeline.map_to_onspd import run_map_onspd
 from scripts.pipeline.normalise_merge import run_normalise_merge
 from scripts.pipeline.reports import write_run_summary
+from scripts.pipeline.temporal import apply_temporal_tracking
 from scripts.pipeline.validate import run_validate
 
 
@@ -40,8 +41,17 @@ def execute_stage(stage: str, territory_code: str, cfg: dict, bundle, data_dir: 
     elif stage == "harvest":
         run_harvest_for_territory(territory_code, cfg, data_dir, run_id, run_date)
     elif stage == "merge":
-        run_normalise_merge(territory_code, data_dir, run_id)
-        write_empty_canonical(territory_code, cfg, data_dir)
+        merged = run_normalise_merge(territory_code, cfg, bundle.scoring_rules, data_dir, run_id)
+        canonical_path = data_dir / "out" / cfg["output"]["canonical_filename"]
+        state_path = data_dir / "state" / "first_last_seen" / f"{territory_code.lower()}.json"
+        rows_with_temporal, _stats = apply_temporal_tracking(
+            merged["rows"],
+            territory_code=territory_code,
+            canonical_output_path=canonical_path,
+            state_path=state_path,
+            run_date=run_date,
+        )
+        write_canonical_csv(cfg, data_dir, rows_with_temporal)
     elif stage == "map-onspd":
         run_map_onspd(territory_code, cfg, bundle.onspd_columns, data_dir)
     elif stage == "validate":
