@@ -6,6 +6,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+from scripts.common.errors import ConfigError
 from scripts.common.fs import read_yaml
 from scripts.common.schema import (
     validate_onspd_columns_config,
@@ -35,9 +36,15 @@ def _deep_merge(base: Any, overlay: Any) -> Any:
 
 def _load_yaml_with_overlay(path: Path, overlay_path: Path | None) -> dict:
     base = read_yaml(path)
+    if not isinstance(base, dict):
+        raise ConfigError(f"YAML at {path} must be a mapping")
     if overlay_path is None or not overlay_path.exists():
         return base
     overlay = read_yaml(overlay_path)
+    if overlay is None:
+        return base
+    if not isinstance(overlay, dict):
+        raise ConfigError(f"Overlay YAML at {overlay_path} must be a mapping")
     return _deep_merge(base, overlay)
 
 
