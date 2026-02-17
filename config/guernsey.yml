@@ -1,38 +1,59 @@
 territory:
   code: GY
   name: Guernsey
-source_priority: ["guernsey_gov_arcgis", "digimap_guernsey", "osm_overpass", "osm_geofabrik"]
+source_priority:
+- guernsey_gov_arcgis
+- digimap_guernsey
+- osm_overpass
+- osm_geofabrik
 validation:
   bbox_wgs84:
-    min_lat: 49.40
+    min_lat: 49.4
     max_lat: 49.55
-    min_lon: -2.70
+    min_lon: -2.7
     max_lon: -2.45
 arcgis:
   enabled: false
   services:
-    - name: guernsey_gov_arcgis
-      service_url: "https://cadastreonline.digimap.gg/arcgis/rest/services/StatesOfGuernsey/CafMapOL/MapServer"
-      layer_ids: [0]
-      query_where: "1=1"
-      id_chunk_size: 500
-      out_fields: "*"
-      expects_authoritative: true
-      source_label: authoritative
+  - name: guernsey_gov_arcgis
+    service_url: https://cadastreonline.digimap.gg/arcgis/rest/services/StatesOfGuernsey/CafMapOL/MapServer
+    layer_ids:
+    - 0
+    query_where: 1=1
+    id_chunk_size: 500
+    out_fields: '*'
+    expects_authoritative: true
+    source_label: authoritative
 overpass:
   enabled: false
-  endpoint: "https://overpass-api.de/api/interpreter"
+  endpoint: https://overpass-api.de/api/interpreter
   timeout_seconds: 180
   area_strategy: bbox
-  bbox: [49.40, -2.70, 49.55, -2.45]
+  bbox:
+  - 49.4
+  - -2.7
+  - 49.55
+  - -2.45
 geofabrik:
   enabled: false
-  pbf_path: ""
-  download_url: ""
+  pbf_path: ''
+  download_url: ''
 fields:
-  postcode_candidates: ["postcode", "POSTCODE", "addr_postcode", "addr:postcode"]
-  lat_candidates: ["lat", "LATITUDE", "y"]
-  lon_candidates: ["lon", "LONGITUDE", "x"]
+  postcode_candidates:
+  - postcode
+  - POSTCODE
+  - addr_postcode
+  - addr:postcode
+  - PostCode
+  - Postcode
+  lat_candidates:
+  - lat
+  - LATITUDE
+  - y
+  lon_candidates:
+  - lon
+  - LONGITUDE
+  - x
   geometry_field: geometry
 crs:
   default_epsg: 4326

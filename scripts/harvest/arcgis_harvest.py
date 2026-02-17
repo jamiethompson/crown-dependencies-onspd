@@ -76,22 +76,38 @@ def _fetch_chunk(client: HttpClient, layer_url: str, object_ids: list[int], out_
         "outSR": "4326",
         "f": "json",
     }
-    payload = client.get_json(
-        f"{layer_url}/query",
-        source_type="arcgis",
-        params=params,
-        timeout=TimeoutConfig(connect=20, read=120),
-    )
-
-    if "error" in payload:
-        # Some endpoints reject outSR. Retry once without outSR.
-        params.pop("outSR", None)
+    if hasattr(client, "post_form_json"):
+        payload = client.post_form_json(
+            f"{layer_url}/query",
+            source_type="arcgis",
+            data=params,
+            timeout=TimeoutConfig(connect=20, read=120),
+        )
+    else:
         payload = client.get_json(
             f"{layer_url}/query",
             source_type="arcgis",
             params=params,
             timeout=TimeoutConfig(connect=20, read=120),
         )
+
+    if "error" in payload:
+        # Some endpoints reject outSR. Retry once without outSR.
+        params.pop("outSR", None)
+        if hasattr(client, "post_form_json"):
+            payload = client.post_form_json(
+                f"{layer_url}/query",
+                source_type="arcgis",
+                data=params,
+                timeout=TimeoutConfig(connect=20, read=120),
+            )
+        else:
+            payload = client.get_json(
+                f"{layer_url}/query",
+                source_type="arcgis",
+                params=params,
+                timeout=TimeoutConfig(connect=20, read=120),
+            )
 
     if "error" in payload:
         raise HttpRequestError(f"ArcGIS chunk query failed for {layer_url}: {payload['error']}")
