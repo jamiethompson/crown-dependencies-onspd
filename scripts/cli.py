@@ -13,9 +13,7 @@ from scripts.common.ids import generate_run_id
 from scripts.common.logging import build_logger, log_event
 from scripts.common.time_utils import parse_run_date
 from scripts.discovery.arcgis_discover import run_discovery
-from scripts.harvest.arcgis_harvest import run_arcgis_harvest
-from scripts.harvest.geofabrik_parse import run_geofabrik_parse
-from scripts.harvest.overpass_harvest import run_overpass_harvest
+from scripts.harvest.runner import run_harvest_for_territory
 from scripts.pipeline.export import write_empty_canonical
 from scripts.pipeline.map_to_onspd import run_map_onspd
 from scripts.pipeline.normalise_merge import run_normalise_merge
@@ -40,9 +38,7 @@ def execute_stage(stage: str, territory_code: str, cfg: dict, bundle, data_dir: 
     if stage == "discover":
         run_discovery(territory_code, cfg, data_dir, run_id)
     elif stage == "harvest":
-        run_arcgis_harvest(territory_code, cfg, data_dir, run_id)
-        run_overpass_harvest(territory_code, cfg, data_dir, run_id)
-        run_geofabrik_parse(territory_code, cfg, data_dir, run_id)
+        run_harvest_for_territory(territory_code, cfg, data_dir, run_id, run_date)
     elif stage == "merge":
         run_normalise_merge(territory_code, data_dir, run_id)
         write_empty_canonical(territory_code, cfg, data_dir)

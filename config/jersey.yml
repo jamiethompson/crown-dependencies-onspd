@@ -9,7 +9,7 @@ validation:
     min_lon: -2.30
     max_lon: -1.95
 arcgis:
-  enabled: true
+  enabled: false
   services:
     - name: jersey_gov_arcgis
       service_url: "https://example.je/arcgis/rest/services/Postcodes/MapServer"
@@ -20,13 +20,13 @@ arcgis:
       expects_authoritative: true
       source_label: authoritative
 overpass:
-  enabled: true
+  enabled: false
   endpoint: "https://overpass-api.de/api/interpreter"
   timeout_seconds: 180
   area_strategy: bbox
   bbox: [49.15, -2.30, 49.31, -1.95]
 geofabrik:
-  enabled: true
+  enabled: false
   pbf_path: ""
   download_url: ""
 fields:

@@ -1,0 +1,13 @@
+{
+  "id": 0,
+  "name": "Postcodes",
+  "geometryType": "esriGeometryPoint",
+  "maxRecordCount": 2000,
+  "fields": [
+    {"name": "OBJECTID", "type": "esriFieldTypeOID"},
+    {"name": "postcode", "type": "esriFieldTypeString"}
+  ],
+  "extent": {
+    "spatialReference": {"wkid": 4326}
+  }
+}

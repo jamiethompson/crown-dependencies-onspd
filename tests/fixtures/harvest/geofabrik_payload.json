@@ -1,0 +1,13 @@
+{
+  "elements": [
+    {
+      "type": "node",
+      "id": 99,
+      "lat": 49.3,
+      "lon": -2.2,
+      "tags": {
+        "addr:postcode": "JE1 1AA"
+      }
+    }
+  ]
+}
