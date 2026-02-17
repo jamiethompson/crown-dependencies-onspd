@@ -1,0 +1,21 @@
+profiles:
+  default:
+    rules:
+      - id: authoritative_presence
+        when: has_source(authoritative)
+        add: 50
+      - id: digimap_presence
+        when: has_source(digimap)
+        add: 20
+      - id: osm_presence
+        when: has_source(osm)
+        add: 10
+      - id: authoritative_coords
+        when: coord_source(authoritative)
+        add: 15
+      - id: osm_coords
+        when: coord_source(osm)
+        add: 5
+    clamp:
+      min: 0
+      max: 100

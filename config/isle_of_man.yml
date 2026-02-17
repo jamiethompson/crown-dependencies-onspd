@@ -1,0 +1,44 @@
+territory:
+  code: IM
+  name: Isle of Man
+source_priority: ["iom_gov_arcgis", "digimap_iom", "osm_overpass", "osm_geofabrik"]
+validation:
+  bbox_wgs84:
+    min_lat: 54.00
+    max_lat: 54.45
+    min_lon: -4.95
+    max_lon: -4.20
+arcgis:
+  enabled: true
+  services:
+    - name: iom_gov_arcgis
+      service_url: "https://example.im/arcgis/rest/services/Postcodes/MapServer"
+      layer_ids: [0]
+      query_where: "1=1"
+      id_chunk_size: 500
+      out_fields: "*"
+      expects_authoritative: true
+      source_label: authoritative
+overpass:
+  enabled: true
+  endpoint: "https://overpass-api.de/api/interpreter"
+  timeout_seconds: 180
+  area_strategy: bbox
+  bbox: [54.00, -4.95, 54.45, -4.20]
+geofabrik:
+  enabled: true
+  pbf_path: ""
+  download_url: ""
+fields:
+  postcode_candidates: ["postcode", "POSTCODE", "addr_postcode", "addr:postcode"]
+  lat_candidates: ["lat", "LATITUDE", "y"]
+  lon_candidates: ["lon", "LONGITUDE", "x"]
+  geometry_field: geometry
+crs:
+  default_epsg: 4326
+  authoritative_epsg_hint_by_source:
+    iom_gov_arcgis: 4326
+scoring_profile: default
+output:
+  canonical_filename: isle_of_man.csv
+  onspd_filename: isle_of_man_onspd.csv

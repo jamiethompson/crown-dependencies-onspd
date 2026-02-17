@@ -1,0 +1,60 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run unit tests
+        run: pytest tests/unit
+
+      - name: Run integration tests
+        run: pytest tests/integration -m integration
+
+      - name: Run regression tests
+        run: pytest tests/regression -m regression
+
+      - name: Run pipeline end-to-end
+        run: make all
+
+      - name: Verify ONSPD headers match contract
+        run: |
+          python - <<'PY'
+          import csv
+          import yaml
+          from pathlib import Path
+
+          cfg = yaml.safe_load(Path("config/onspd_columns.yml").read_text(encoding="utf-8"))
+          expected = [c["name"] for c in cfg["columns"]]
+          for filename in ["jersey_onspd.csv", "guernsey_onspd.csv", "isle_of_man_onspd.csv"]:
+              with Path("data/out") .joinpath(filename).open("r", encoding="utf-8", newline="") as f:
+                  actual = next(csv.reader(f))
+              if actual != expected:
+                  raise SystemExit(f"Header mismatch for {filename}: {actual} != {expected}")
+          PY
+
+      - name: Archive artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ci-artifacts
+          path: |
+            data/out
+            data/run_meta
