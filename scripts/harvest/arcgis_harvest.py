@@ -69,11 +69,17 @@ def _fetch_ids(client: HttpClient, layer_url: str, where: str) -> tuple[str | No
     return object_id_field, [int(v) for v in object_ids]
 
 
-def _fetch_chunk(client: HttpClient, layer_url: str, object_ids: list[int], out_fields: str) -> dict:
+def _fetch_chunk(
+    client: HttpClient,
+    layer_url: str,
+    object_ids: list[int],
+    out_fields: str,
+    return_geometry: bool,
+) -> dict:
     params = {
         "objectIds": ",".join(str(i) for i in object_ids),
         "outFields": out_fields,
-        "returnGeometry": "true",
+        "returnGeometry": "true" if return_geometry else "false",
         "outSR": "4326",
         "f": "json",
     }
@@ -161,6 +167,7 @@ def run_arcgis_harvest(
             where = service.get("query_where", "1=1")
             id_chunk_size = int(service.get("id_chunk_size", 500))
             out_fields = service.get("out_fields", "*")
+            return_geometry = bool(service.get("return_geometry", True))
 
             for layer_id in layer_ids:
                 layer_url = _layer_url(service_url, int(layer_id))
@@ -169,7 +176,13 @@ def run_arcgis_harvest(
                     continue
 
                 for chunk_ids in _chunked(object_ids, id_chunk_size):
-                    chunk_payload = _fetch_chunk(client, layer_url, chunk_ids, out_fields)
+                    chunk_payload = _fetch_chunk(
+                        client,
+                        layer_url,
+                        chunk_ids,
+                        out_fields,
+                        return_geometry=return_geometry,
+                    )
                     features = chunk_payload.get("features") or []
 
                     for feature in features:

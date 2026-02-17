@@ -2,6 +2,8 @@ territory:
   code: IM
   name: Isle of Man
 source_priority:
+  - iom_landregistry_public
+  - iom_landregistry_pp
   - iom_gambling_opportunities
   - iom_household_help
   - iom_food_and_drink
@@ -21,6 +23,24 @@ validation:
 arcgis:
   enabled: false
   services:
+    - name: iom_landregistry_public
+      service_url: "https://utility.arcgis.com/usrsvcs/servers/56a0457bb7da4ccbb3ce64497ad9b3f7/rest/services/BusinessDynamicServices/LandRegistryPublic/MapServer"
+      layer_ids: [4]
+      query_where: "1=1"
+      id_chunk_size: 500
+      out_fields: "OBJECTID,Postcode"
+      return_geometry: false
+      expects_authoritative: true
+      source_label: authoritative
+    - name: iom_landregistry_pp
+      service_url: "https://utility.arcgis.com/usrsvcs/servers/aeba36a16ec64f2992acc28cb6544646/rest/services/BusinessDynamicServices/PPLandRegistryPublic/MapServer"
+      layer_ids: [4]
+      query_where: "1=1"
+      id_chunk_size: 500
+      out_fields: "OBJECTID,Postcode"
+      return_geometry: false
+      expects_authoritative: true
+      source_label: authoritative
     - name: iom_gambling_opportunities
       service_url: "https://services3.arcgis.com/dBlcVWoJgxxpCttN/arcgis/rest/services/GamblingOpportunities/FeatureServer"
       layer_ids: [0]
@@ -111,6 +131,8 @@ fields:
 crs:
   default_epsg: 27700
   authoritative_epsg_hint_by_source:
+    iom_landregistry_public: 27700
+    iom_landregistry_pp: 27700
     iom_gambling_opportunities: 27700
     iom_household_help: 27700
     iom_food_and_drink: 27700

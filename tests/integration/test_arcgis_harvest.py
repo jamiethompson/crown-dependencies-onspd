@@ -129,3 +129,64 @@ def test_arcgis_harvest_uses_geometry_when_latlon_fields_are_malformed(tmp_path:
 
     assert result["rows"][0]["raw_lat"] == 49.22
     assert result["rows"][0]["raw_lon"] == -2.11
+
+
+@pytest.mark.integration
+def test_arcgis_harvest_respects_return_geometry_false(tmp_path: Path):
+    class FakeNoGeometryClient:
+        def __init__(self):
+            self.chunk_params = []
+
+        def get_json(self, _url: str, **kwargs):
+            params = kwargs.get("params") or {}
+            if params.get("returnIdsOnly") == "true":
+                return {"objectIdFieldName": "OBJECTID", "objectIds": [1]}
+            self.chunk_params.append(params)
+            return {
+                "features": [
+                    {
+                        "attributes": {"OBJECTID": 1, "postcode": "IM1 1AA"},
+                    }
+                ]
+            }
+
+        def close(self):
+            return None
+
+    fake = FakeNoGeometryClient()
+    territory_config = {
+        "arcgis": {
+            "enabled": True,
+            "services": [
+                {
+                    "name": "iom_landregistry_public",
+                    "service_url": "https://utility.arcgis.com/usrsvcs/servers/x/rest/services/y/MapServer",
+                    "layer_ids": [4],
+                    "query_where": "1=1",
+                    "id_chunk_size": 500,
+                    "out_fields": "OBJECTID,Postcode",
+                    "source_label": "authoritative",
+                    "return_geometry": False,
+                }
+            ],
+        },
+        "fields": {
+            "postcode_candidates": ["postcode"],
+            "lat_candidates": ["lat"],
+            "lon_candidates": ["lon"],
+        },
+    }
+
+    result = run_arcgis_harvest(
+        "IM",
+        territory_config,
+        tmp_path,
+        run_id="run-2c",
+        run_date="2026-02-17",
+        http_client=fake,
+    )
+
+    assert result["row_count"] == 1
+    assert fake.chunk_params
+    assert fake.chunk_params[0]["returnGeometry"] == "false"
+    assert result["rows"][0]["raw_geometry"] is None
