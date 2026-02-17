@@ -55,7 +55,7 @@ def execute_stage(stage: str, territory_code: str, cfg: dict, bundle, data_dir: 
     elif stage == "map-onspd":
         run_map_onspd(territory_code, cfg, bundle.onspd_columns, data_dir)
     elif stage == "validate":
-        run_validate(territory_code, data_dir, run_id, run_date)
+        run_validate(territory_code, cfg, bundle.onspd_columns, data_dir, run_id, run_date)
     else:
         raise ValueError(f"Unknown stage: {stage}")
 
@@ -91,6 +91,8 @@ def run_command(args: argparse.Namespace) -> int:
                     status="error",
                     error_code=exc.error_code,
                 )
+                if exc.error_code == "CONTRACT_ERROR":
+                    return EXIT_HARD_FAIL
                 if args.strict:
                     return EXIT_HARD_FAIL
             except Exception:

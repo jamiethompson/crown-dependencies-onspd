@@ -1,0 +1,3 @@
+territory,postcode,normalised_postcode,source_list,source_count,has_coordinates,lat,lon,coordinate_source,confidence_score,first_seen,last_seen,notes
+JE,JE1 1AA,JE1 1AA,osm_overpass,1,true,49.25,-2.15,osm,15,2026-02-17,2026-02-17,OSM_BASELINE_ONLY
+JE,je23ab,JE2 3AB,jersey_gov_arcgis;osm_overpass,2,true,49.2,-2.1,authoritative,75,2026-02-17,2026-02-17,
