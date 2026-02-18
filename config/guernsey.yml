@@ -47,6 +47,7 @@ overpass:
   - -2.45
 geofabrik:
   enabled: false
+  input_path: ''
   pbf_path: ''
   download_url: ''
 fields:

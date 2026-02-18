@@ -68,7 +68,12 @@ Stages 1-4 are implemented: scaffold, config loading, source ingestion, determin
 - IM ArcGIS source list includes `LandRegistryPublic` and `PPLandRegistryPublic` parcel layers (postcode field), plus public address/POI layers and OSM.
 - JE ArcGIS source list includes `StatesOfJersey/JerseyPlanning` (Gazetteer) plus `JSearch` postcode centroids.
 - GY ArcGIS source list includes `CafMapOL` address points plus `CadastreTRPOL` parcel postcodes.
-- `scripts/harvest/geofabrik_parse.py` accepts both Overpass-style JSON and standard GeoJSON `FeatureCollection` files, so fallback extracts can be ingested when provided locally.
+- Overpass harvesting supports multiple postcode tags via `overpass.postcode_tags`; default tags are `addr:postcode`, `postal_code`, `contact:postcode`, and `addr:postal_code`.
+- `scripts/harvest/geofabrik_parse.py` supports:
+  - local `geofabrik.input_path` (`.json`, `.geojson`, or `.pbf`)
+  - legacy `geofabrik.pbf_path` (treated the same as `input_path`)
+  - `geofabrik.download_url` (download at run time when no input path is provided)
+- For `.pbf` inputs, `osmium` must be installed because the parser runs `osmium tags-filter` and `osmium export` before ingesting the generated GeoJSON.
 - Coverage goal bands are reported in territory validation JSON for IM/JE/GY:
   - IM target: 46k-47k
   - JE target: 15k-16k

@@ -105,6 +105,7 @@ overpass:
   bbox: [54.0, -4.95, 54.45, -4.2]
 geofabrik:
   enabled: false
+  input_path: ""
   pbf_path: ""
   download_url: ""
 fields:
