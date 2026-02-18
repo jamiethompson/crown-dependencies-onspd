@@ -85,6 +85,8 @@ def test_validate_generates_territory_report(tmp_path: Path):
     report = report_path.read_text(encoding="utf-8")
     assert '"unique_postcodes": 1' in report
     assert '"75_100": 1' in report
+    assert '"coverage_targets"' in report
+    assert '"status": "fail_band"' in report
 
 
 def test_validate_raises_on_onspd_header_mismatch(tmp_path: Path):

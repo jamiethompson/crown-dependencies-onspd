@@ -10,6 +10,12 @@ from scripts.common.constants import TERRITORY_SLUG_BY_CODE
 from scripts.common.errors import ContractError, StageError
 from scripts.common.fs import read_json, write_json
 
+DEFAULT_COVERAGE_TARGETS = {
+    "IM": {"target_min": 46000, "target_max": 47000, "min_expected": 45000, "fail_below": 30000},
+    "JE": {"target_min": 15000, "target_max": 16000, "min_expected": 14000, "fail_below": 9000},
+    "GY": {"target_min": 12000, "target_max": 13000, "min_expected": 11000, "fail_below": 7000},
+}
+
 
 def _read_csv_rows(path: Path) -> tuple[list[str], list[dict]]:
     if not path.exists():
@@ -63,6 +69,37 @@ def _compute_fill_rates(header: list[str], rows: list[dict]) -> list[dict]:
         fill_percent = 0.0 if total == 0 else round((filled / total) * 100, 2)
         stats.append({"column": column, "filled": filled, "null": null, "fill_percent": fill_percent})
     return stats
+
+
+def _coverage_target_report(territory_code: str, unique_postcodes: int) -> dict:
+    target = DEFAULT_COVERAGE_TARGETS.get(territory_code)
+    if not target:
+        return {"configured": False}
+
+    target_min = int(target["target_min"])
+    target_max = int(target["target_max"])
+    min_expected = int(target["min_expected"])
+    fail_below = int(target["fail_below"])
+
+    if unique_postcodes >= target_min:
+        status = "on_target"
+    elif unique_postcodes >= min_expected:
+        status = "below_target"
+    elif unique_postcodes >= fail_below:
+        status = "at_risk"
+    else:
+        status = "fail_band"
+
+    return {
+        "configured": True,
+        "target_min": target_min,
+        "target_max": target_max,
+        "min_expected": min_expected,
+        "fail_below": fail_below,
+        "actual_unique_postcodes": unique_postcodes,
+        "gap_to_target_min": max(0, target_min - unique_postcodes),
+        "status": status,
+    }
 
 
 def run_validate(
@@ -138,6 +175,7 @@ def run_validate(
             else round((with_coordinates / len(canonical_rows)) * 100, 2),
         },
         "confidence_buckets": _confidence_buckets(canonical_rows),
+        "coverage_targets": _coverage_target_report(territory_code, len(canonical_rows)),
         "onspd_fill": _compute_fill_rates(onspd_header, onspd_rows),
         "warnings": warnings,
         "errors": errors,
