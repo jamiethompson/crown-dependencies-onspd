@@ -23,6 +23,9 @@ python -m scripts.cli validate --territory all
 python -m scripts.cli all --territory all
 # live IM sources (ArcGIS + Overpass overlay)
 python -m scripts.cli all --territory IM --overlay-config-dir config/live
+# live JE/GY sources (ArcGIS + Overpass overlay)
+python -m scripts.cli all --territory JE --overlay-config-dir config/live
+python -m scripts.cli all --territory GY --overlay-config-dir config/live
 ```
 
 Equivalent Make targets:
@@ -64,6 +67,10 @@ Stages 1-4 are implemented: scaffold, config loading, source ingestion, determin
 - `config/live/isle_of_man.yml` enables live IM ArcGIS + Overpass harvesting without changing base config.
 - IM ArcGIS source list includes `LandRegistryPublic` and `PPLandRegistryPublic` parcel layers (postcode field), plus public address/POI layers and OSM.
 - `scripts/harvest/geofabrik_parse.py` accepts both Overpass-style JSON and standard GeoJSON `FeatureCollection` files, so fallback extracts can be ingested when provided locally.
+- Coverage goal bands are reported in territory validation JSON for IM/JE/GY:
+  - IM target: 46k-47k
+  - JE target: 15k-16k
+  - GY target: 12k-13k
 - Candidate fallback data sources for local GeoJSON ingestion:
   - [NextGIS OSM Isle of Man extract](https://data.nextgis.com/en/region/IM/base/)
   - [GADM Isle of Man boundaries](https://gadm.org/download_country.html)
