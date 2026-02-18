@@ -51,7 +51,12 @@ def _download_input(download_url: str, target_path: Path) -> None:
                 f.write(chunk)
 
 
-def _convert_pbf_to_geojson(input_path: Path, output_geojson: Path) -> str | None:
+def _pbf_filter_tags(postcode_candidates: list[str]) -> list[str]:
+    tags = [f"nwr/{tag}" for tag in postcode_candidates if ":" in tag or "_" in tag]
+    return tags or [f"nwr/{tag}" for tag in DEFAULT_POSTCODE_KEYS]
+
+
+def _convert_pbf_to_geojson(input_path: Path, output_geojson: Path, postcode_candidates: list[str]) -> str | None:
     osmium_path = shutil.which("osmium")
     if osmium_path is None:
         return "GEOFABRIK_OSMIUM_MISSING"
@@ -63,10 +68,7 @@ def _convert_pbf_to_geojson(input_path: Path, output_geojson: Path) -> str | Non
                 osmium_path,
                 "tags-filter",
                 str(input_path),
-                "nwr/addr:postcode",
-                "nwr/postal_code",
-                "nwr/contact:postcode",
-                "nwr/addr:postal_code",
+                *_pbf_filter_tags(postcode_candidates),
                 "-o",
                 str(filtered_pbf),
                 "-O",
@@ -194,7 +196,7 @@ def run_geofabrik_parse(
             suffix = input_path.suffix.lower()
             if suffix == ".pbf":
                 parse_path = out_dir / f"{territory_code.lower()}_{run_id}_geofabrik_export.geojson"
-                conversion_warning = _convert_pbf_to_geojson(input_path, parse_path)
+                conversion_warning = _convert_pbf_to_geojson(input_path, parse_path, postcode_candidates)
                 if conversion_warning:
                     warnings.append(conversion_warning)
                     parse_path = None

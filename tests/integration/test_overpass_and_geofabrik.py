@@ -248,7 +248,7 @@ def test_geofabrik_parse_uses_converted_geojson_for_pbf(tmp_path: Path, monkeypa
     pbf_path = tmp_path / "im_extract.osm.pbf"
     pbf_path.write_bytes(b"not-a-real-pbf")
 
-    def fake_convert(_input_path: Path, output_geojson: Path):
+    def fake_convert(_input_path: Path, output_geojson: Path, _postcode_candidates: list[str]):
         output_geojson.write_text(
             json.dumps(
                 {
@@ -326,5 +326,42 @@ def test_geofabrik_parse_emits_warning_when_pbf_conversion_fails(tmp_path: Path,
 @pytest.mark.integration
 def test_convert_pbf_warns_when_osmium_missing(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
     monkeypatch.setattr(geofabrik_parse.shutil, "which", lambda _name: None)
-    warning = geofabrik_parse._convert_pbf_to_geojson(tmp_path / "x.osm.pbf", tmp_path / "x.geojson")
+    warning = geofabrik_parse._convert_pbf_to_geojson(
+        tmp_path / "x.osm.pbf",
+        tmp_path / "x.geojson",
+        list(geofabrik_parse.DEFAULT_POSTCODE_KEYS),
+    )
     assert warning == "GEOFABRIK_OSMIUM_MISSING"
+
+
+@pytest.mark.integration
+def test_convert_pbf_uses_configured_postcode_candidates(tmp_path: Path, monkeypatch: pytest.MonkeyPatch):
+    pbf_path = tmp_path / "x.osm.pbf"
+    pbf_path.write_bytes(b"pbf")
+    out_path = tmp_path / "x.geojson"
+    captured: list[list[str]] = []
+
+    monkeypatch.setattr(geofabrik_parse.shutil, "which", lambda _name: "/usr/bin/osmium")
+
+    def fake_run(args, **_kwargs):
+        if args[1] == "tags-filter":
+            captured.append(args)
+            filtered_index = args.index("-o") + 1
+            Path(args[filtered_index]).write_bytes(b"filtered")
+        elif args[1] == "export":
+            export_index = args.index("-o") + 1
+            Path(args[export_index]).write_text(json.dumps({"elements": []}), encoding="utf-8")
+        return None
+
+    monkeypatch.setattr(geofabrik_parse.subprocess, "run", fake_run)
+    warning = geofabrik_parse._convert_pbf_to_geojson(
+        pbf_path,
+        out_path,
+        ["postcode", "POSTCODE", "addr:postcode", "postal_code"],
+    )
+
+    assert warning is None
+    assert len(captured) == 1
+    filter_args = captured[0]
+    assert "nwr/addr:postcode" in filter_args
+    assert "nwr/postal_code" in filter_args
