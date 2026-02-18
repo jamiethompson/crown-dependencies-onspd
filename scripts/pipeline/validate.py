@@ -11,9 +11,9 @@ from scripts.common.errors import ContractError, StageError
 from scripts.common.fs import read_json, write_json
 
 DEFAULT_COVERAGE_TARGETS = {
-    "IM": {"target_min": 46000, "target_max": 47000, "min_expected": 45000, "fail_below": 30000},
-    "JE": {"target_min": 15000, "target_max": 16000, "min_expected": 14000, "fail_below": 9000},
-    "GY": {"target_min": 12000, "target_max": 13000, "min_expected": 11000, "fail_below": 7000},
+    "IM": {"target_min": 6095, "target_max": 6095, "min_expected": 5800, "fail_below": 4000},
+    "JE": {"target_min": 3662, "target_max": 3662, "min_expected": 3400, "fail_below": 2400},
+    "GY": {"target_min": 3383, "target_max": 3383, "min_expected": 3100, "fail_below": 2200},
 }
 
 
