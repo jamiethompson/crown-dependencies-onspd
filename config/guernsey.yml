@@ -3,6 +3,7 @@ territory:
   name: Guernsey
 source_priority:
 - guernsey_gov_arcgis
+- guernsey_cadastre_land_parcels
 - digimap_guernsey
 - osm_overpass
 - osm_geofabrik
@@ -22,6 +23,16 @@ arcgis:
     query_where: 1=1
     id_chunk_size: 500
     out_fields: '*'
+    expects_authoritative: true
+    source_label: authoritative
+  - name: guernsey_cadastre_land_parcels
+    service_url: https://gps.digimap.gg/arcgis/rest/services/StatesOfGuernsey/CadastreTRPOL/MapServer
+    layer_ids:
+    - 2
+    query_where: 1=1
+    id_chunk_size: 500
+    out_fields: OBJECTID,POSTCODE
+    return_geometry: false
     expects_authoritative: true
     source_label: authoritative
 overpass:
@@ -59,6 +70,7 @@ crs:
   default_epsg: 4326
   authoritative_epsg_hint_by_source:
     guernsey_gov_arcgis: 4326
+    guernsey_cadastre_land_parcels: 3108
 scoring_profile: default
 output:
   canonical_filename: guernsey.csv

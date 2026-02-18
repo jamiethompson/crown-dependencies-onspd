@@ -3,6 +3,7 @@ territory:
   name: Jersey
 source_priority:
 - jersey_gov_arcgis
+- jersey_jsearch_postcode_centroids
 - digimap_jersey
 - osm_overpass
 - osm_geofabrik
@@ -22,6 +23,15 @@ arcgis:
     query_where: 1=1
     id_chunk_size: 500
     out_fields: '*'
+    expects_authoritative: true
+    source_label: authoritative
+  - name: jersey_jsearch_postcode_centroids
+    service_url: https://gps.digimap.gg/arcgis/rest/services/JSearch/MapServer
+    layer_ids:
+    - 0
+    query_where: 1=1
+    id_chunk_size: 500
+    out_fields: OBJECTID,Postcode
     expects_authoritative: true
     source_label: authoritative
 overpass:
@@ -59,6 +69,7 @@ crs:
   default_epsg: 4326
   authoritative_epsg_hint_by_source:
     jersey_gov_arcgis: 4326
+    jersey_jsearch_postcode_centroids: 3109
 scoring_profile: default
 output:
   canonical_filename: jersey.csv
