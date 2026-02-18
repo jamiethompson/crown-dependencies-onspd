@@ -137,6 +137,19 @@ def test_build_overpass_query_uses_all_configured_tags():
 
 
 @pytest.mark.integration
+def test_build_overpass_query_accepts_scalar_tag_config():
+    query = build_overpass_query(
+        {
+            "timeout_seconds": 120,
+            "area_strategy": "bbox",
+            "bbox": [49.15, -2.3, 49.31, -1.95],
+            "postcode_tags": "postal_code",
+        }
+    )
+    assert 'nwr["postal_code"](49.15,-2.3,49.31,-1.95);' in query
+
+
+@pytest.mark.integration
 def test_geofabrik_parse_ingests_json_fixture(tmp_path: Path):
     fixture_path = tmp_path / "geofabrik_payload.json"
     fixture_path.write_text(Path("tests/fixtures/harvest/geofabrik_payload.json").read_text(encoding="utf-8"), encoding="utf-8")

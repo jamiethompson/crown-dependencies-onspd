@@ -16,7 +16,14 @@ def _postcode_tags(overpass_config: dict) -> list[str]:
     configured = overpass_config.get("postcode_tags")
     if not configured:
         return list(DEFAULT_POSTCODE_TAGS)
-    tags = [str(tag).strip() for tag in configured if str(tag).strip()]
+    values: Iterable[object]
+    if isinstance(configured, str):
+        values = [configured]
+    elif isinstance(configured, Iterable):
+        values = configured
+    else:
+        values = [configured]
+    tags = [str(tag).strip() for tag in values if str(tag).strip()]
     return tags or list(DEFAULT_POSTCODE_TAGS)
 
 
