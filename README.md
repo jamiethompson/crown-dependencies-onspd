@@ -66,6 +66,8 @@ Stages 1-4 are implemented: scaffold, config loading, source ingestion, determin
 - `config/isle_of_man.yml` keeps known IM source definitions but defaults all sources to disabled for deterministic local/CI runs.
 - `config/live/isle_of_man.yml` enables live IM ArcGIS + Overpass harvesting without changing base config.
 - IM ArcGIS source list includes `LandRegistryPublic` and `PPLandRegistryPublic` parcel layers (postcode field), plus public address/POI layers and OSM.
+- JE ArcGIS source list includes `StatesOfJersey/JerseyPlanning` (Gazetteer) plus `JSearch` postcode centroids.
+- GY ArcGIS source list includes `CafMapOL` address points plus `CadastreTRPOL` parcel postcodes.
 - `scripts/harvest/geofabrik_parse.py` accepts both Overpass-style JSON and standard GeoJSON `FeatureCollection` files, so fallback extracts can be ingested when provided locally.
 - Coverage goal bands are reported in territory validation JSON for IM/JE/GY:
   - IM target: 46k-47k
